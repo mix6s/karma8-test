@@ -7,13 +7,13 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 function check_email(string $email): int
 {
-    sleep(random_int(1, 1));
+    sleep(random_int(1, 60));
     return random_int(0, 1);
 }
 
 function send_email($email, $from, $to, $subj, $body): void
 {
-    sleep(random_int(1, 1));
+    sleep(random_int(1, 10));
 }
 
 function createAmqpConnection(): AMQPStreamConnection
