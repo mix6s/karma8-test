@@ -15,6 +15,12 @@ cp docker-compose.yml.dist docker-compose.yml
 docker-compose up -d
 ```
 
+## Installing dependencies
+```
+docker-compose exec cron composer install
+docker-compose restart
+```
+
 ## Adding fake data to DB
 ```
 docker-compose exec cron php -f src/add_fake_data.php
