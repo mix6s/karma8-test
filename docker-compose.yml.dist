@@ -1,0 +1,60 @@
+version: '3.2'
+
+services:
+  cron:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: karma8-test.cron.php
+    restart: unless-stopped
+    command: cron -f
+    depends_on:
+      - postgres
+      - rabbit
+    tty: true
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+
+  consumer:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: karma8-test.consumer.php
+    restart: unless-stopped
+    command: php -f /var/www/src/consumer.php
+    depends_on:
+      - postgres
+      - rabbit
+    tty: true
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+
+  postgres:
+    container_name: karma8-test.postgres
+    image: postgres:13.2-alpine
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      POSTGRES_DB: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_USER: dev
+      TZ: UTC
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d
+
+  rabbit:
+    container_name: karma8-test.rabbitmq
+    image: rabbitmq:3.8-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=dev
+      - RABBITMQ_DEFAULT_PASS=dev
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+  pgdata:
